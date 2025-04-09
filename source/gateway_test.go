@@ -75,8 +75,7 @@ func TestGatewayMatchingHost(t *testing.T) {
 			desc: "wildcard-matches-multiple-subdomains",
 			a:    "*.example.net",
 			b:    "foo.bar.test.example.net",
-			host: "foo.bar.test.example.net",
-			ok:   true,
+			ok:   false,
 		},
 		{
 			desc: "wildcard-doesnt-match-parent",
@@ -89,6 +88,13 @@ func TestGatewayMatchingHost(t *testing.T) {
 			a:    "*example.net",
 			b:    "test.example.net",
 			ok:   false,
+		},
+		{
+			desc: "multiple-subdomain",
+			a: "*.bar.test.example.net",
+			b: "foo.bar.test.example.net",
+			host: "foo.bar.test.example.net",
+			ok: true,
 		},
 	}
 	for _, tt := range tests {

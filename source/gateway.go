@@ -23,6 +23,7 @@ import (
 	"sort"
 	"strings"
 	"text/template"
+	"regexp"
 
 	log "github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
@@ -560,8 +561,12 @@ func gwMatchingHost(a, b string) (string, bool) {
 	if na, nb := len(a), len(b); nb < na || (na == nb && strings.HasPrefix(b, "*.")) {
 		a, b = b, a
 	}
-	if strings.HasPrefix(a, "*.") && strings.HasSuffix(b, a[1:]) {
-		return b, true
+	if strings.HasPrefix(a, "*.") {
+		re := regexp.MustCompile(`^[a-zA-Z0-9][a-zA-Z0-9-]*\.`)
+		strippedRtHost := re.ReplaceAllString(b, "")
+		if strings.Compare(strippedRtHost, strings.TrimPrefix(a, "*.")) == 0 {
+			return b, true
+		}
 	}
 	return "", false
 }
